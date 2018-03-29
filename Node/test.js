@@ -2,9 +2,10 @@ var debounce = require('debounce');
 var serialport = require('serialport');
 var xbox = require('xbox-controller-node');
 var request = require('request');
-var gamenumber = 2044;
+var gamenumber = 2053;
 var idPlayer = "";
 var iphost = "172.31.28.177";
+var http = require("http");
 
 //var portname = process.argv[2];
 /*
@@ -25,7 +26,6 @@ function onOpen()
 }
 
 function hit(){
-var http = require("http");
 
 var options = {
   "method": "POST",
@@ -111,7 +111,6 @@ xbox.on('error', showError);
 xbox.on('a',debounce( function () {
   sendDataBluetooth('f');
   console.log('a');
-  var http = require("http");
 
 var options = {
   "method": "POST",
@@ -148,7 +147,6 @@ xbox.on('x',debounce( function () {
 	idPlayer = contents;
 });
 
-var http = require("http");
 
 var options = {
   "method": "POST",
@@ -180,42 +178,34 @@ req.end();
 }));
 
 xbox.on('b',debounce( function () {
-  sendDataBluetooth('s');
   console.log('b');
-  var http = require("http");
 
 var options = {
-  "method": "GET",
-  "hostname": ""+iphost+"",
-  "port": "3000",
-  "path": "/game/"+gamenumber+"/player/"+idPlayer+"/ammo",
-  "headers": {
-    "content-type": "application/json",
-    "cache-control": "no-cache"
-  }
+    hostname: iphost,
+    port: "3000",
+    path: '/game/' + gamenumber + '/player/' + idPlayer + '/ammo',
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+    }
 };
-
-var req = http.request(options, function (res) {
-  var chunks = [];
-
-  res.on("data", function (chunk) {
-    chunks.push(chunk);
-  });
-
-  res.on("end", function () {
-    var body = Buffer.concat(chunks);
-    console.log(body.toString());
-  });
+var req = http.request(options, function(res) {
+    res.on('data', function(body) {
+        console.log('GET ammo:');
+        console.log('Body: ' + body);
+    });
 });
-
-req.write(JSON.stringify({ username: 'Android' }));
+req.on('error', function(e) {
+    console.log('problem with request: ' + e.message);
+});
 req.end();
 }));
+
+
 
 xbox.on('y', debounce(function(){
 	console.log('y');
 	var qs = require("querystring");
-var http = require("http");
 
 var options = {
   "method": "POST",
@@ -248,7 +238,6 @@ var req = http.request(options, function (res) {
   
     });
 });
-
   
 });
 
