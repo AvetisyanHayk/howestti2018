@@ -24,9 +24,9 @@ var rl = readline.createInterface({
 });
 
 
-/*myPort.on('open', onOpen);
+myPort.on('open', onOpen);
 myPort.on('data', onrecieveData);
-myPort.on('error', showError)*/
+myPort.on('error', showError);
 
 rl.on('line', sendDataBluetooth);
 
@@ -67,9 +67,9 @@ req.end();
 function onrecieveData(data)
 {
 	console.log("Received data: " + data);
-	if(data = 'HIT')
+	if(data == 'HIT')
 	{
-		 sendDataServer('/game/0/player/' + playerID + '/hit', 'POST');
+		 sendDataServer('/game/'+gamenumber+'/player/' + playerID + '/hit', 'POST');
 	}
 }
 
@@ -81,7 +81,7 @@ function sendDataBluetooth(data)
 
 function sendDataServer(data, method)
 {
-	var url = 'http://localhost:3000' + data;
+	var url = iphost + data;
 	// Set the headers
 	var headers = {
 		'User-Agent':       'Super Agent/0.0.1',
@@ -151,7 +151,7 @@ req.end();
 
 xbox.on('x',debounce( function () {
    console.log('x');
-     
+     /*
    fs.readFile('idplayer.txt', 'utf8', function(err, contents) {
     console.log(contents);
 	idPlayer = contents;
@@ -184,7 +184,8 @@ xbox.on('x',debounce( function () {
 	});
 
 	req.end();
-
+*/
+	sendDataBluetooth('4');
 }));
 
 xbox.on('b',debounce( function () {
