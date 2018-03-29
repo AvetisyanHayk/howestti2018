@@ -142,6 +142,41 @@ req.end();
 
 xbox.on('x',debounce( function () {
    console.log('x');
+     fs = require('fs');
+   fs.readFile('idplayer.txt', 'utf8', function(err, contents) {
+    console.log(contents);
+	idPlayer = contents;
+});
+
+var http = require("http");
+
+var options = {
+  "method": "POST",
+  "hostname": ""+iphost+"",
+  "port": "3000",
+  "path": "/game/"+gamenumber+"/player/"+idPlayer+"/reconnect",
+  "headers": {
+    "content-type": "application/json",
+    "cache-control": "no-cache",
+
+  }
+};
+
+var req = http.request(options, function (res) {
+  var chunks = [];
+
+  res.on("data", function (chunk) {
+    chunks.push(chunk);
+  });
+
+  res.on("end", function () {
+    var body = Buffer.concat(chunks);
+    console.log(body.toString());
+  });
+});
+
+req.end();
+
 }));
 
 xbox.on('b',debounce( function () {
