@@ -1,24 +1,34 @@
 var debounce = require('debounce');
 var serialport = require('serialport');
+var readline = require('readline');
 var xbox = require('xbox-controller-node');
 var request = require('request');
 var gamenumber = 2053;
 var idPlayer = "";
 var iphost = "172.31.28.177";
 var http = require("http");
+const fs = require('fs');
 
-//var portname = process.argv[2];
-/*
+var portname = process.argv[2];
+
 var myPort = new serialport(portname, {
-	bauttRate: 115200,
+	bauttRate: 9600,
 	//parser:serialport.parsers.readline("\r\n")
 })
-*/
+
 let playerID;
+
+var rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
 
 /*myPort.on('open', onOpen);
 myPort.on('data', onrecieveData);
 myPort.on('error', showError)*/
+
+rl.on('line', sendDataBluetooth);
 
 function onOpen()
 {
@@ -66,7 +76,7 @@ function onrecieveData(data)
 function sendDataBluetooth(data)
 {
 	console.log("Sending to Droid: " + data);
-	//myPort.write(data + "\n");
+	myPort.write(data + "\n");
 }
 
 function sendDataServer(data, method)
@@ -109,7 +119,7 @@ function showError(error)
 xbox.on('error', showError);
 
 xbox.on('a',debounce( function () {
-  sendDataBluetooth('f');
+  sendDataBluetooth('5');
   console.log('a');
 
 var options = {
@@ -141,39 +151,39 @@ req.end();
 
 xbox.on('x',debounce( function () {
    console.log('x');
-     fs = require('fs');
+     
    fs.readFile('idplayer.txt', 'utf8', function(err, contents) {
     console.log(contents);
 	idPlayer = contents;
-});
+	});
 
 
-var options = {
-  "method": "POST",
-  "hostname": ""+iphost+"",
-  "port": "3000",
-  "path": "/game/"+gamenumber+"/player/"+idPlayer+"/reconnect",
-  "headers": {
-    "content-type": "application/json",
-    "cache-control": "no-cache",
+	var options = {
+	  "method": "POST",
+	  "hostname": ""+iphost+"",
+	  "port": "3000",
+	  "path": "/game/"+gamenumber+"/player/"+idPlayer+"/reconnect",
+	  "headers": {
+		"content-type": "application/json",
+		"cache-control": "no-cache",
 
-  }
-};
+	  }
+	};
 
-var req = http.request(options, function (res) {
-  var chunks = [];
+	var req = http.request(options, function (res) {
+	  var chunks = [];
 
-  res.on("data", function (chunk) {
-    chunks.push(chunk);
-  });
+	  res.on("data", function (chunk) {
+		chunks.push(chunk);
+	  });
 
-  res.on("end", function () {
-    var body = Buffer.concat(chunks);
-    console.log(body.toString());
-  });
-});
+	  res.on("end", function () {
+		var body = Buffer.concat(chunks);
+		console.log(body.toString());
+	  });
+	});
 
-req.end();
+	req.end();
 
 }));
 
@@ -250,20 +260,37 @@ xbox.on('start',debounce( function () {
   console.log('start');
 }));
 
-
+let state = 'stop';
 xbox.on('leftstickLeft', function () {
   console.log('Moving [LEFTSTICK] LEFT');
+  if(state !== 'left'){
+	state = 'left';
+	sendDataBluetooth('3');
+  }
+  
 });
 
 xbox.on('leftstickUp', function () {
   console.log('Moving [LEFTSTICK] UP');
+  if(state !== 'up'){
+    state = 'up';
+	sendDataBluetooth('0');
+  }
 });
 
 xbox.on('leftstickDown', function () {
   console.log('Moving [LEFTSTICK] DOWN');
+  if(state !== 'down'){
+	state = 'down';
+	sendDataBluetooth('1');
+  }
 });
 
 xbox.on('leftstickRight', function () {
   console.log('Moving [LEFTSTICK] RIGHT');
+  if(state !== 'right'){
+	state = 'right';
+	sendDataBluetooth('2');
+  }
 });
 
