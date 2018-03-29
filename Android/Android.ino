@@ -13,12 +13,12 @@ void setup() {
   Serial.begin(9600);
   Serial1.begin(9600);
 
-  pinMode(input1, INPUT);
-  pinMode(input2, INPUT);
-  pinMode(input3, INPUT);
-  pinMode(input4, INPUT);
-  pinMode(enableA, INPUT);
-  pinMode(enableB, INPUT);
+  pinMode(input1, OUTPUT);
+  pinMode(input2, OUTPUT);
+  pinMode(input3, OUTPUT);
+  pinMode(input4, OUTPUT);
+  pinMode(enableA, OUTPUT);
+  pinMode(enableB, OUTPUT);
   
   digitalWrite(enableA, 1);
   digitalWrite(enableB, 1);
@@ -31,10 +31,13 @@ int i = 0;
 void loop() {
   // put your main code here, to run repeatedly:
   goBack();
-  //delay(100);
-  //goStraight();
-  
-
+  delay(1000);
+  goStraight();
+  delay(1000);
+  goLeft();
+  delay(1000);
+  goRight();
+  delay(1000);
   /*
   if (Serial1.available()) {
     int inByte = Serial1.read();
