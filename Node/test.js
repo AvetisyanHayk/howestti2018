@@ -2,8 +2,8 @@ var debounce = require('debounce');
 var serialport = require('serialport');
 var xbox = require('xbox-controller-node');
 var request = require('request');
-var gamenumber = 2040;
-var idPlayer;
+var gamenumber = 2044;
+var idPlayer = "";
 var iphost = "172.31.28.177";
 
 //var portname = process.argv[2];
@@ -205,7 +205,16 @@ var req = http.request(options, function (res) {
 	var recv = JSON.parse(body);
 	idPlayer = recv.result.id
         console.log(recv.result.id);
-  });
+
+  
+  fs = require('fs');
+  fs.writeFile('idplayer.txt', ""+idPlayer+"", function (err) {
+  if (err) return console.log(err);
+  
+    });
+});
+
+  
 });
 
 req.write(qs.stringify({ name: 'Android' }));
